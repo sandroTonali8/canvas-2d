@@ -35,7 +35,7 @@ export default function App() {
     };
   }
 
-  const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  const onMouseUp = (_e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     dragStart.current = null;
   }
 
@@ -49,13 +49,13 @@ export default function App() {
   }
 
   const onWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    //const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     const scaleRange = [0.1, 5];
     let newScale = scale + (e.deltaY < 0 ? 0.5 : (scale < 1.2 ? -0.2 : -0.5));
     if (newScale < scaleRange[0]) newScale = scaleRange[0];
     if (newScale > scaleRange[1]) newScale = scaleRange[1];
     setScale(newScale);
-    const rect = canvas.getBoundingClientRect();
+    //const rect = canvas.getBoundingClientRect();
   }
   
   useEffect(() => {
