@@ -11,6 +11,7 @@ export default function App() {
     dy: 0,
   });
   const [scale, setScale] = useState(1);
+  const [isNegative, setIsNegative] = useState(false);
 
   const dragStart = useRef<{
     x: number;
@@ -72,13 +73,29 @@ export default function App() {
   };
 
   const onNegativeFilm = () => {
+    setIsNegative(!isNegative);
+  };
+
+  useEffect(() => {
+    if (!image) {
+      return;
+    }
+
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d');
-
     if (!ctx) {
-      throw new Error('Can not create canvas context')
-    } else if (image) {
-      const imageData = ctx.getImageData(0, 0, image.width, image.height);
+      throw new Error('Can not create canvas context');
+    }
+
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    const ratio = image.height / image.width;
+    ctx.drawImage(image, offset.dx, offset.dy, width * scale, width * ratio * scale);
+
+    if (isNegative) {
+      const imageData = ctx.getImageData(0, 0, width, height);
       const data = imageData.data;
       for (let i = 0; i < data.length; i += 4) {
         data[i] = 255 - data[i];
@@ -88,28 +105,7 @@ export default function App() {
       const newData = new ImageData(new Uint8ClampedArray(data), imageData.width, imageData.height);
       ctx.putImageData(newData, 0, 0);
     }
-  };
-  
-  useEffect(() => {
-    if (!image) {
-      return;
-    }
-
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      throw new Error('Can not create canvas context')
-    };
-
-    const width = canvas.width;
-    const height = canvas.height;
-    ctx.clearRect(0, 0, width, height);
-
-    const ratio = image.height / image.width;
-    ctx.drawImage(image, offset.dx, offset.dy, width * scale, height * ratio * scale);
-    
-  }, [image, offset, scale])
+  }, [image, offset, scale, isNegative]);
   
   return (
     <div style={{
